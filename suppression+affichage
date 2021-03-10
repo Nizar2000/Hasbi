@@ -1,0 +1,94 @@
+Fonction 1 : suppression
+void supprimer(eleve e, FILE *f)
+ {
+     int i,j=0,trouve=1;
+     if(fichier_vide()==1)
+	   printf("le fichier est vide\n");
+     else
+     {
+       f=fopen("classe.dat","r+t");
+       if(f==NULL)
+             printf("le fichier n'a pas encore ete cree");
+       else
+       {
+           printf("\ndonner la matricule de l'etudiant a supprimer:");
+	       scanf("%d",&i);
+	       if(fread(&e,sizeof(e),1,f)<1)
+                  printf("le fichier n'a pas encore ete ouvert\n");
+           else
+              {
+                  while(feof(f)==0)
+                    {
+                       j++;
+                       if(e.mat==i)
+                          {
+                             trouve=0;
+                             fseek(f,(j-1)*sizeof(e),0);
+                             e.mat=-1;
+                             if(fwrite(&e,sizeof(e),1,f)<1)
+                             printf("l'eleve a ete supprimer\n");
+                             break;
+                          }
+                       if(fread(&e,sizeof(e),1,f)<1 && feof(f)==0)
+                          printf("le fichier n'a pas encore ete ouvert\n");
+                     }
+                  if(trouve==1)
+                     printf("cet eleve n'existe pas\n");
+              }
+       }
+       fclose(f);
+     }
+     getch();
+ }
+ 
+ Fonction 2 : Affichage
+ void affichage(etudiant e,FILE *f)
+ {
+    int compt=0;
+    if(fichier_vide()==1)
+	   printf("le fichier est vide\n");
+    else
+    {
+      f=fopen("fonction.biblio","rt");
+	  if(f==NULL)
+            printf("le fichier n'a pas encore ete cree");
+      else
+        {
+            if(fread(&e,sizeof(e),1,f)<1)
+       	       printf("le fichier contient %d etudiant(s)\n",compt);
+            else
+               while(feof(f)==0)
+                     {
+                        if(e.mat!=-1)
+                           {
+                              printf("\nle nom et prenom sont : %s\nle matricule est : %d\nla moyenne  est : %f\nla date est : %d",e.NP,e.Mat,e.Moy,e.Date.DN);
+                              printf("\n-------------------\n");
+                              compt++;
+                           }
+                        if(fread(&e,sizeof(e),1,f)<1)
+       	                   printf("le fichier contient %d etudiant(s)\n",compt);
+                     }
+        }
+      fclose(f);
+    }
+    getch();
+ }
+ int fichier_vide(void)
+ {
+     FILE *f;
+     etudiant e;
+     int a=0;
+     f=fopen("fonctions.biblio","rt");
+     if(f==NULL)
+         printf("le fichier n'a pas encore ete cree");
+     else
+         {
+            if(fread(&e,sizeof(e),1,f)<1)
+                    a=1;
+            else
+                if(e.mat==-1)
+                    a=1;
+         }
+     fclose(f);
+     return a;
+ }
